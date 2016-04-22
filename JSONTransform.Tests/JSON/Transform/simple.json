@@ -1,0 +1,13 @@
+﻿[
+  {
+    "responseType": "survey"
+  },
+  {
+    "item": "question",
+    "text":  "{{ question }}"
+  },
+  {
+    "item": "answer",
+    "text":  "{{ answer }}"
+  }
+]

@@ -1,0 +1,15 @@
+﻿[
+  {
+    "responseType": "survey"
+  },
+  {
+    "item": "question",
+    "text":  "{{ question }}"
+  },
+  {
+    "item": "answer",
+    "text": {
+      "response_b": "{{ answer.partOne.b }}"
+    }
+  }
+]

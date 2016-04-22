@@ -1,0 +1,15 @@
+﻿[
+  {
+    "responseType": "survey"
+  },
+  {
+    "item": "questionPassing",
+    "==": "{{ answer.partOne.type }} = 'string'",
+    "text":  "{{ question }}"
+  },
+  {
+    "item": "questionFailing",
+    "==": "{{ answer.partOne.type }} = 'decimal'",
+    "text":  "{{ question }}"
+  }
+]

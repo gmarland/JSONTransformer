@@ -1,0 +1,11 @@
+﻿{
+  "question": "How are you doing?",
+  "answer": {
+    "partOne": {
+        "type": "string",
+        "a": "I'm doing pretty well",
+        "b": "A different response"
+      },
+      "partTwo": "I wish I was better"
+  }
+}

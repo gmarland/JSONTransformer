@@ -1,0 +1,16 @@
+﻿{
+  "responseType": "survey",
+  "items": [
+    {
+      "type": "question",
+      "text": "{{ question }}"
+    },
+    {
+      "type": "answer",
+      "text": [
+        "{{ answer.partOne.a }}",
+        "{{ answer.partOne.b }}"
+      ]
+    }
+  ]
+}
