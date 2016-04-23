@@ -52,9 +52,9 @@ The main function requires 2 parameters, the source you want to translate from a
 
 ### Replacements
 
-The basic replacement is marked using {{ .. }} within the JSON property or value. Within that a simple dot notation can be used, e.g. {{ this.is.a.path.to.child }}
+A basic replacement is marked using {{ .. }} within the JSON property or value. Within that a simple dot notation can be used, e.g. {{ this.is.a.path.to.child }}
 
-Arrays within the path can be navigated using the usual 0 based bracket notation, e.g. {{ path.to.array[0].child }}
+Arrays within the path can be navigated using the usual 0 index based bracket notation, e.g. {{ path.to.array[0].child }}
 
 ### If Statements
 
@@ -166,6 +166,16 @@ Would result in the following output
     }]
   }
 ```
+
+
+## Limitations
+
+There are currently several limitations with the library which are as follows:
+
+- Both properties and values must be enclosed with double quotes.
+- Strings used in comparisons much be single quoted.
+- Certain keywords, such as CONTAINS, must be upper case in order to be recognized.
+
 
 ## Going Forward
 
