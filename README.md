@@ -108,3 +108,12 @@ would translate to the following if the if evaluated true:
   }
 }
 ```
+#### Comparitors
+
+If statements at present can evaluate with either strings or numbers. Bear in mind that strings must be enclosed using single quotes ('). The following comparisons may be used:
+
+*** Equals *** - e.g. "{{ if (child.object.property == 'this value') }}:"
+*** Not Equals *** - e.g. "{{ if (child.object.property != 'this value') }}:"
+*** Contains *** - case sensitive keyword. e.g. "{{ if (child.object.property CONTAINS 'this value') }}:"
+
+*** And Operators *** - e.g.
