@@ -397,8 +397,7 @@ namespace JSONTranform.Tests
 
             Assert.AreEqual(resultArray.Count, 2);
 
-            bool passingThere = false;
-            bool failingThere = false;
+            bool answersThere = false;
 
             foreach (JToken entry in resultArray.Children())
             {
@@ -406,19 +405,23 @@ namespace JSONTranform.Tests
 
                 JObject child = (JObject)entry;
 
-                if (child["passing"] != null)
+                if (child["answers"] != null)
                 {
-                    if (((string)child["passing"]["item"]) == "questionPassing")
-                    {
-                        passingThere = true;
-                        Assert.AreEqual("How are you doing?", (string)child["passing"]["text"]);
-                    }
+                    answersThere = true;
+
+                    Assert.IsInstanceOfType(child["answers"], typeof(JArray));
+
+                    JArray answersArray = (JArray)child["answers"];
+
+                    Assert.AreEqual(2, answersArray.Count);
+
+                    Assert.AreEqual(answersArray[0]["answer"], "I'm doing pretty well");
+                    Assert.AreEqual(answersArray[1]["answer"], "I wish I was better");
                 }
-                if (child["failing"] != null) failingThere = true;
+                if (child["failing"] != null) answersThere = true;
             }
 
-            Assert.IsTrue(passingThere);
-            Assert.IsFalse(failingThere);
+            Assert.IsTrue(answersThere);
         }
 
         private JToken GetJSONObject(string path)
