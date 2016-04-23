@@ -10,7 +10,7 @@ The reason for doing this is to easily allow the passing of data between systems
   <tr>
     <td width="33.33%" align="left" valign="top">
       <div><b>Source</b></div>
-      <div style="font-size:8px;">
+      <div>
         {<br/>
           &nbsp;"question": "How are you doing?",<br/>
           &nbsp;"answers": [<br/>
@@ -22,7 +22,7 @@ The reason for doing this is to easily allow the passing of data between systems
     </td>
     <td width="33.33%" align="left" valign="top">
       <div><b>Transformation</b></div>
-      <div style="font-size:8px;">
+      <div>
       {<br/>
         &nbsp;"responseType": "survey",<br/>
         &nbsp;"{{ each(answer IN answers) AS answers }}": {<br/>
@@ -34,7 +34,7 @@ The reason for doing this is to easily allow the passing of data between systems
     </td>
     <td width="33.33%" align="left" valign="top">
       <div><b>Result</b></div>
-      <div style="font-size:8px;">
+      <div>
       {<br/>
         &nbsp;"responseType": "survey",<br/>
         &nbsp;"answers": [{<br/>
@@ -53,3 +53,26 @@ The reason for doing this is to easily allow the passing of data between systems
 ## Getting started
 
 The main function requires 2 parameters, the source you want to translate from and the transformation you want to apply. Both of these are JTokens and therefore can be a JObject or JArray. If the source is a JObject the transformation will only be applied to that object. If the source is a JArray the transformation will be applied to each child object and then appended together for a returning JArray. 
+
+## Syntax for transformations
+
+### Replacements
+
+The basic replacement is marked using {{ .. }} within the JSON property or value. Within that a simple dot notation can be used, e.g. {{ this.is.a.path.to.child }}
+
+Arrays within the path can be navigated using the usual 0 based bracket notation, e.g. {{ path.to.array[0].child }}
+
+### If Statements
+
+If statements can be included in a transformation be setting them in the a property. This will then evaluate whether to include the child. e.g.
+
+```json
+{
+  "file": "transformation",
+  "{{ if (child.in.source == 'this value' }}": {
+    "this": "here",
+    "only": "if the parent condition is true"
+  }
+}
+```
+
