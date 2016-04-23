@@ -1,4 +1,4 @@
-# JSONTransformer
+# JSON Transformer
 
 The goal of this project is to create an engine that transforms a JSON input based on a seperate transformation structure in order to give a new data structure.
 
