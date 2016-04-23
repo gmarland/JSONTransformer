@@ -91,6 +91,9 @@
     <None Include="JSON\Transform\nestedNested.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="JSON\Transform\multiple.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="JSON\Transform\simple.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

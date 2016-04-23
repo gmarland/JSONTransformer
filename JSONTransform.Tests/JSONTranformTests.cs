@@ -42,6 +42,36 @@ namespace JSONTranform.Tests
         }
 
         [TestMethod]
+        public void TransformMultipleJSONValid()
+        {
+            JToken source = GetJSONObject(@"JSON\Source\nested.json");
+            JToken transform = GetJSONObject(@"JSON\Transform\multiple.json");
+
+            JToken result = Transformer.TransformJSON(source, transform);
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(JArray));
+
+            JArray resultArray = ((JArray)result);
+
+            Assert.AreEqual(resultArray.Count, 3);
+
+            foreach (JToken entry in resultArray.Children())
+            {
+                Assert.IsInstanceOfType(entry, typeof(JObject));
+
+                JObject child = (JObject)entry;
+
+                if (child["responseType"] != null) Assert.AreEqual("survey", (string)child["responseType"]);
+                else if (child["item"] != null)
+                {
+                    if (((string)child["item"]) == "question") Assert.AreEqual("How are you doing?", (string)child["text"]);
+                    else if (((string)child["item"]) == "answer") Assert.AreEqual("I'm doing pretty well and I wish I was better", (string)child["text"]);
+                }
+            }
+        }
+
+        [TestMethod]
         public void TransformNestedJSONValid()
         {
             JToken source = GetJSONObject(@"JSON\Source\nested.json");
