@@ -44,7 +44,7 @@ The reason for doing this is to easily allow the passing of data between systems
       }
     </td>
   </tr>
-</table
+</table>
 
 ## Getting started
 
