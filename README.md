@@ -151,7 +151,7 @@ Having this transformation applied
 ```json
   {
     "responseType": "survey",
-    {{ each(answer IN answers) AS answers }}": {
+    "{{ each(answer IN answers) AS answers }}": {
       "text": "{{ question }}",
       "answer": "{{ answer }}"
     }
@@ -169,5 +169,5 @@ Would result in the following output
     }, {
       "text": "How are you doing?",
       "answer": "I wish I was better"
-    }]<br/>
+    }]
   }
