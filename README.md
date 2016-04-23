@@ -6,49 +6,41 @@ The reason for doing this is to easily allow the passing of data between systems
 
 ## Quick Example
 
-<table width="100%">
-  <tr>
-    <td width="33.33%" align="left" valign="top">
-      <div><b>Source</b></div>
-      <div>
-        {<br/>
-          &nbsp;"question": "How are you doing?",<br/>
-          &nbsp;"answers": [<br/>
-          &nbsp;&nbsp;"I'm doing pretty well",<br/>
-          &nbsp;&nbsp;"I wish I was better"<br/>
-          &nbsp;]<br/>
-        }
-      </div>
-    </td>
-    <td width="33.33%" align="left" valign="top">
-      <div><b>Transformation</b></div>
-      <div>
-      {<br/>
-        &nbsp;"responseType": "survey",<br/>
-        &nbsp;"{{ each(answer IN answers) AS answers }}": {<br/>
-        &nbsp;&nbsp;"text": "{{ question }}",<br/>
-        &nbsp;&nbsp;"answer": "{{ answer }}"<br/>
-        &nbsp;}<br/>
-      }
-      </div>
-    </td>
-    <td width="33.33%" align="left" valign="top">
-      <div><b>Result</b></div>
-      <div>
-      {<br/>
-        &nbsp;"responseType": "survey",<br/>
-        &nbsp;"answers": [{<br/>
-        &nbsp;&nbsp;"text": "How are you doing?",<br/>
-        &nbsp;&nbsp;"answer": "I'm doing pretty well"<br/>
-        &nbsp;}, {<br/>
-        &nbsp;&nbsp;"text": "How are you doing?",<br/>
-        &nbsp;&nbsp;"answer": "I wish I was better"<br/>
-        &nbsp;}]<br/>
-      }
-      </div>
-    </td>
-  </tr>
-</table>
+<b>Source</b>
+```json
+  {
+    "question": "How are you doing?",
+    "answers": [
+      "I'm doing pretty well",
+      "I wish I was better"
+    ]
+  }
+```
+
+<b>Transformation</b>
+````json
+  {
+    "responseType": "survey",
+    "{{ each(answer IN answers) AS answers }}": {
+        "text": "{{ question }}",
+        "answer": "{{ answer }}"
+    }
+  }
+```
+
+<b>Result</b>
+````json
+{
+  "responseType": "survey",
+  "answers": [{
+    "text": "How are you doing?",
+    "answer": "I'm doing pretty well"
+  }, {
+    "text": "How are you doing?",
+    "answer": "I wish I was better"
+  }]
+}
+```
 
 
 ## Getting started
