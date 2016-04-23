@@ -343,6 +343,45 @@ namespace JSONTranform.Tests
             Assert.IsFalse(failingThere);
         }
 
+        [TestMethod]
+        public void TransformMaskedAndConditional()
+        {
+            JToken source = GetJSONObject(@"JSON\Source\nestedNested.json");
+            JToken transform = GetJSONObject(@"JSON\Transform\maskedAndConditional.json");
+
+            JToken result = Transformer.TransformJSON(source, transform);
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(JArray));
+
+            JArray resultArray = ((JArray)result);
+
+            Assert.AreEqual(resultArray.Count, 2);
+
+            bool passingThere = false;
+            bool failingThere = false;
+
+            foreach (JToken entry in resultArray.Children())
+            {
+                Assert.IsInstanceOfType(entry, typeof(JObject));
+
+                JObject child = (JObject)entry;
+
+                if (child["passing"] != null)
+                {
+                    if (((string)child["passing"]["item"]) == "questionPassing")
+                    {
+                        passingThere = true;
+                        Assert.AreEqual("How are you doing?", (string)child["passing"]["text"]);
+                    }
+                }
+                if (child["failing"] != null) failingThere = true;
+            }
+
+            Assert.IsTrue(passingThere);
+            Assert.IsFalse(failingThere);
+        }
+
         private JToken GetJSONObject(string path)
         {
             return JToken.Parse(File.ReadAllText(Path.Combine(Environment.CurrentDirectory, path)));

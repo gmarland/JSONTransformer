@@ -94,6 +94,12 @@
     <None Include="JSON\Transform\simple.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="JSON\Transform\maskedAndConditional.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="JSON\Transform\simpleEach.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="JSON\Transform\simpleOrConditional.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

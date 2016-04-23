@@ -1,6 +1,7 @@
 ﻿using JSONTransform.Models;
 using JSONTransform.Utils;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -98,6 +99,9 @@ namespace JSONTranform
 
                         if (logicalType.HasValue)
                         {
+                            string logicalMask = StringUtils.GetAsMask(cleanedProperty);
+                            if (!String.IsNullOrEmpty(logicalMask)) cleanedProperty = StringUtils.GetPropertyWithoutMask(cleanedProperty);
+
                             if (logicalType == LogicalType.IF)
                             {
                                 if (LogicalUtils.ParseValidIfCondition(cleanedProperty, source))
@@ -106,16 +110,24 @@ namespace JSONTranform
 
                                     if (child != null)
                                     {
-                                        Dictionary<string, object> serializedChild = child.ToObject<Dictionary<string, object>>();
-
-                                        foreach (string childProperty in serializedChild.Keys)
+                                        if (String.IsNullOrEmpty(logicalMask))
                                         {
-                                            returnJSON.Add(childProperty, serializedChild[childProperty]);
+                                            Dictionary<string, object> serializedChild = child.ToObject<Dictionary<string, object>>();
+
+                                            foreach (string childProperty in serializedChild.Keys)
+                                            {
+                                                returnJSON.Add(childProperty, serializedChild[childProperty]);
+                                            }
                                         }
+                                        else returnJSON.Add(logicalMask, child);
                                     }
                                     else return null;
                                 }
                                 else return null;
+                            }
+                            else if (logicalType == LogicalType.EACH)
+                            {
+
                             }
                         }
                         else returnJSON.Add(ReplaceUtils.TransformString(property, source).ToString(), BuildResponseObject(source, property, serializedTransformation[property]));
