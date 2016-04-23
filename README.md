@@ -114,13 +114,13 @@ would translate to the following if the if evaluated true:
 
 If statements at present can evaluate with either strings or numbers. Bear in mind that strings must be enclosed using single quotes ('). The following comparisons may be used:
 
-<b>Equals<b> - e.g. 
+<b>Equals</b> - e.g. 
 ```"{{ if (child.object.property == 'this value') }}":```
 
-<b>Not Equals<b> - e.g. 
+<b>Not Equals</b> - e.g. 
 ```"{{ if (child.object.property != 'this value') }}":```
 
-<b>Contains<b> - case sensitive keyword. e.g. 
+<b>Contains</b> - case sensitive keyword. e.g. 
 ```"{{ if (child.object.property CONTAINS 'this value') }}":```
 
 <b>And Operator</b> - e.g.
