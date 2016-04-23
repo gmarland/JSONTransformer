@@ -11,36 +11,36 @@ The reason for doing this is to easily allow the passing of data between systems
     <td width="33.33%" align="left" valign="top">
       <div><b>Source</b></div>
       <div>
-        {
-          "question": "How are you doing?",
-          "answers": [
-            "I'm doing pretty well",
-            "I wish I was better"
-          ]
+        {<br/>
+          "question": "How are you doing?",<br/>
+          "answers": [<br/>
+            "I'm doing pretty well",<br/>
+            "I wish I was better"<br/>
+          ]<br/>
         }
       </div>
     </td>
     <td width="33.33%" align="left" valign="top">
       <div><b>Transformation</b></div>
       {
-        "responseType": "survey",
-        "{{ each(answer IN answers) AS answers }}": {
-          "text": "{{ question }}",
-          "answer": "{{ answer }}"
-        }
+        "responseType": "survey",<br/>
+        "{{ each(answer IN answers) AS answers }}": {<br/>
+          "text": "{{ question }}",<br/>
+          "answer": "{{ answer }}"<br/>
+        }<br/>
       }
     </td>
     <td width="33.33%" align="left" valign="top">
       <div><b>Result</b></div>
       {
-        "responseType": "survey",
-        "answers": [{
-          "text": "How are you doing?",
-          "answer": "I'm doing pretty well"
-        }, {
-          "text": "How are you doing?",
-          "answer": "I wish I was better"
-        }]
+        "responseType": "survey",<br/>
+        "answers": [{<br/>
+          "text": "How are you doing?",<br/>
+          "answer": "I'm doing pretty well"<br/>
+        }, {<br/>
+          "text": "How are you doing?",<br/>
+          "answer": "I wish I was better"<br/>
+        }]<br/>
       }
     </td>
   </tr>
