@@ -56,7 +56,7 @@ The reason for doing this is to easily allow the passing of data between systems
 The main function requires 2 parameters, the source you want to translate from and the transformation you want to apply. Both of these are JTokens and therefore can be a JObject or JArray. If the source is a JObject the transformation will only be applied to that object. If the source is a JArray the transformation will be applied to each child object and then appended together for a returning JArray. 
 
 
-## Syntax for transformations
+## Syntax for Transformations
 
 ### Replacements
 
@@ -173,3 +173,8 @@ Would result in the following output
       "answer": "I wish I was better"
     }]
   }
+```
+
+## Going Forward
+
+This is very much version 1.0 of the project and would benefit from real world applications and suggestions.
