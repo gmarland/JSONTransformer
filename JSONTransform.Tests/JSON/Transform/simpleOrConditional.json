@@ -1,0 +1,17 @@
+﻿[
+  {
+    "responseType": "survey"
+  },
+  {
+    "{{ if ((answer.partOne.type == 'string') || (answer.partOne.type == 'decimal')) }}": {
+      "item": "questionPassing",
+      "text": "{{ question }}"
+    }
+  },
+  {
+    "{{ if ((answer.partOne.type == 'gareth') || (answer.partOne.type == 'rules')) }}": {
+      "item": "questionFailing",
+      "text": "{{ question }}"
+    }
+  }
+]

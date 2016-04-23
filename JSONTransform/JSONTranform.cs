@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using JSONTransform.Models;
+using JSONTransform.Utils;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -7,10 +8,6 @@ namespace JSONTranform
 {
     public static class Transformer
     {
-        private static readonly string _tokenRegex = "{{(.+?)}}";
-
-        #region Methods for transforming JSON
-
         public static JToken TransformJSON(JToken source, JToken transformation)
         {
            // Starting transformation
@@ -86,77 +83,57 @@ namespace JSONTranform
 
             Dictionary<string, object> returnJSON = new Dictionary<string, object>();
             Dictionary<string, object> serializedTransformation = transformation.ToObject<Dictionary<string, object>>();
-
-            // Checking for transformation condition
-
-            bool hasCondition = false;
-            string condition = String.Empty;
-
+            
             foreach (string property in serializedTransformation.Keys)
             {
-                if (property.ToLower() == "==")
+                Match match = Regex.Match(property, ReplaceUtils.TokenRegex);
+
+                if (match.Success)
                 {
-                    // Transformation condition found
+                    if (match.Value.Length == property.Length)
+                    {
+                        string cleanedProperty = StringUtils.CleanProperty(property);
 
-                    hasCondition = true;
-                    condition = TransformString((string)serializedTransformation[property], source).ToString();
-                    break;
+                        LogicalType? logicalType = LogicalUtils.GetLogicalType(cleanedProperty);
+
+                        if (logicalType.HasValue)
+                        {
+                            if (logicalType == LogicalType.IF)
+                            {
+                                if (LogicalUtils.ParseValidIfCondition(cleanedProperty, source))
+                                {
+                                    JObject child = TransformObject(source, (JObject)serializedTransformation[property]);
+
+                                    if (child != null)
+                                    {
+                                        Dictionary<string, object> serializedChild = child.ToObject<Dictionary<string, object>>();
+
+                                        foreach (string childProperty in serializedChild.Keys)
+                                        {
+                                            returnJSON.Add(childProperty, serializedChild[childProperty]);
+                                        }
+                                    }
+                                    else return null;
+                                }
+                                else return null;
+                            }
+                        }
+                        else returnJSON.Add(ReplaceUtils.TransformString(property, source).ToString(), BuildResponseObject(source, property, serializedTransformation[property]));
+                    }
                 }
-            }
-
-            if (!hasCondition) returnJSON = BuildResponseJSON(source, serializedTransformation);
-            else
-            {
-                bool isValid = false;
-
-                if (condition.Contains("!="))
-                {
-                    // Transformation condition is NEQ
-
-                    string[] conditionParts = condition.Split(new char[] { '=' });
-
-                    string leftSide = conditionParts[0].TrimEnd(new char[] { '!' }).Replace("'", String.Empty).Replace("\"", String.Empty).Trim();
-                    string rightSide = conditionParts[1].Replace("'", String.Empty).Replace("\"", String.Empty).Trim();
-                    
-                    isValid = leftSide.ToLower() != rightSide.ToLower();
-                }
-                else if (condition.Contains("="))
-                {
-                    // Transformation condition is EQ
-
-                    string[] conditionParts = condition.Split(new char[] { '=' });
-
-                    string leftSide = conditionParts[0].Replace("'", String.Empty).Replace("\"", String.Empty).Trim();
-                    string rightSide = conditionParts[1].Replace("'", String.Empty).Replace("\"", String.Empty).Trim();
-                    
-                    isValid = leftSide.ToLower() == rightSide.ToLower();
-                }
-
-                if (isValid) returnJSON = BuildResponseJSON(source, serializedTransformation);
-                else return null;
+                else returnJSON.Add(ReplaceUtils.TransformString(property, source).ToString(), BuildResponseObject(source, property, serializedTransformation[property]));
             }
 
             return JObject.FromObject(returnJSON);
         }
 
-        private static Dictionary<string, object> BuildResponseJSON(JObject source, Dictionary<string, object> serializedTransformation)
+        private static object BuildResponseObject(JObject source, string propertyName, object propertyValue)
         {
             // Building response JSON
-
-            Dictionary<string, object> returnJSON = new Dictionary<string, object>();
-
-            foreach (string property in serializedTransformation.Keys)
-            {
-                if (property.ToLower() != "condition")
-                {
-                    if (serializedTransformation[property].GetType() == typeof(string)) returnJSON.Add(TransformString(property, source).ToString(), TransformString((string)serializedTransformation[property], source));
-                    else if (serializedTransformation[property].GetType() == typeof(JObject)) returnJSON.Add(TransformString(property, source).ToString(), TransformObject(source, (JObject)serializedTransformation[property]));
-                    else if (serializedTransformation[property].GetType() == typeof(JArray)) returnJSON.Add(TransformString(property, source).ToString(), TransformObject(source, (JArray)serializedTransformation[property]));
-                    else returnJSON.Add(TransformString(property, source).ToString(), serializedTransformation[property]);
-                }
-            }
-
-            return returnJSON;
+            if (propertyValue.GetType() == typeof(string)) return ReplaceUtils.TransformString((string)propertyValue, source);
+            else if (propertyValue.GetType() == typeof(JObject)) return TransformObject(source, (JObject)propertyValue);
+            else if (propertyValue.GetType() == typeof(JArray)) return TransformObject(source, (JArray)propertyValue);
+            else return propertyValue;
         }
 
         private static JArray TransformObject(JObject source, JArray transformation)
@@ -165,90 +142,12 @@ namespace JSONTranform
 
             foreach (JToken child in transformation.Children())
             {
-                if (child.Type == JTokenType.String) returnJSON.Add(TransformString((string)child, source));
+                if (child.Type == JTokenType.String) returnJSON.Add(ReplaceUtils.TransformString((string)child, source));
                 else if (child.GetType() == typeof(JObject)) returnJSON.Add(TransformObject(source, (JObject)child));
                 else returnJSON.Add(child);
             }
 
             return JArray.FromObject(returnJSON);
         }
-
-        private static object TransformString(string target, JObject resource)
-        {
-            // Attempting to transform string
-
-            string returnString = target;
-
-            foreach (Match match in Regex.Matches(target, _tokenRegex))
-            {
-                // Match found
-
-                string cleanedMatch = match.Value.Substring(2);
-                cleanedMatch = cleanedMatch.Substring(0, cleanedMatch.Length - 2);
-
-                string[] matchPath = cleanedMatch.Trim().Split(new char[] { '.' });
-                JToken matchedObject = resource;
-
-                if (matchPath.Length == 1) matchedObject = GetObjectProperty(matchPath[0], matchedObject);
-                else
-                {
-                    foreach (string matchPathPart in matchPath)
-                    {
-                        matchedObject = GetObjectProperty(matchPathPart, matchedObject);
-
-                        if (matchedObject == null) break;
-                    }
-                }
-
-                if (matchedObject != null)
-                {
-                    if (matchedObject.Type == JTokenType.String) returnString = returnString.Replace(match.Value, (string)matchedObject);
-                    else return matchedObject;
-                }
-                else throw new Exception("Unable to match value \"" + match.Value + "\"");
-            }
-
-            return returnString;
-        }
-
-        private static JToken GetObjectProperty(string property, JToken obj)
-        {
-            // Checking to see if an array is specified for matching
-
-            Match arrayMatch = Regex.Match(property, @"\[[(0-9)]\]");
-
-            if (arrayMatch.Success)
-            {
-                // An array match is required
-
-                string propertyNameCleaned = property.Replace(arrayMatch.Value, String.Empty);
-
-                // Checking that the requested property to match on is a array
-
-                if (((JObject)obj)[propertyNameCleaned].GetType() == typeof(JArray))
-                {
-                    // Matched property is array
-
-                    JArray objectArray = (JArray)((JObject)obj)[propertyNameCleaned];
-
-                    string cleanedArrayMatch = arrayMatch.Value.Substring(1);
-                    cleanedArrayMatch = cleanedArrayMatch.Substring(0, cleanedArrayMatch.Length - 1);
-
-                    int arrayValue = Int32.Parse(cleanedArrayMatch);
-
-                    if (arrayValue < objectArray.Count) return objectArray[arrayValue];
-                    else return null;
-                }
-                else
-                {
-                    // Matched property is not an array
-
-                    return null;
-                }
-            }
-            else return ((JObject)obj)[property];
-        }
-
-        #endregion
     }
 }

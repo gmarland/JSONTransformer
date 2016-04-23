@@ -256,13 +256,62 @@ namespace JSONTranform.Tests
         }
 
         [TestMethod]
-        public void TransformNestedConditionalJSONValid()
+        public void TransformSimpleEqualConditionalJSONValid()
         {
             JToken source = GetJSONObject(@"JSON\Source\nestedNested.json");
-            JToken transform = GetJSONObject(@"JSON\Transform\simpleConditional.json");
+            JToken transform = GetJSONObject(@"JSON\Transform\simpleEqualConditional.json");
 
             JToken result = Transformer.TransformJSON(source, transform);
 
+            CheckConditionalResults(result);
+        }
+
+        [TestMethod]
+        public void TransformSimpleNotEqualConditionalJSONValid()
+        {
+            JToken source = GetJSONObject(@"JSON\Source\nestedNested.json");
+            JToken transform = GetJSONObject(@"JSON\Transform\simpleNotEqualConditional.json");
+
+            JToken result = Transformer.TransformJSON(source, transform);
+
+            CheckConditionalResults(result);
+        }
+
+        [TestMethod]
+        public void TransformSimplContainsConditionalJSONValid()
+        {
+            JToken source = GetJSONObject(@"JSON\Source\nestedNested.json");
+            JToken transform = GetJSONObject(@"JSON\Transform\simpleContainsConditional.json");
+
+            JToken result = Transformer.TransformJSON(source, transform);
+
+            CheckConditionalResults(result);
+        }
+
+        [TestMethod]
+        public void TransformSimpleAndConditionalJSONValid()
+        {
+            JToken source = GetJSONObject(@"JSON\Source\nestedNested.json");
+            JToken transform = GetJSONObject(@"JSON\Transform\simpleAndConditional.json");
+
+            JToken result = Transformer.TransformJSON(source, transform);
+
+            CheckConditionalResults(result);
+        }
+
+        [TestMethod]
+        public void TransformSimpleOrConditionalJSONValid()
+        {
+            JToken source = GetJSONObject(@"JSON\Source\nestedNested.json");
+            JToken transform = GetJSONObject(@"JSON\Transform\simpleOrConditional.json");
+
+            JToken result = Transformer.TransformJSON(source, transform);
+
+            CheckConditionalResults(result);
+        }
+
+        private void CheckConditionalResults(JToken result)
+        {
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(JArray));
 

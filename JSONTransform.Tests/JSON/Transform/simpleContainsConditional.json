@@ -1,0 +1,17 @@
+﻿[
+  {
+    "responseType": "survey"
+  },
+  {
+    "{{ if (answer.partOne.type CONTAINS 'str') }}": {
+      "item": "questionPassing",
+      "text": "{{ question }}"
+    }
+  },
+  {
+    "{{ if (answer.partOne.type CONTAINS 'dec') }}": {
+      "item": "questionFailing",
+      "text": "{{ question }}"
+    }
+  }
+]
