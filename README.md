@@ -9,7 +9,7 @@ The reason for doing this is to easily allow the passing of data between systems
 <table width="100%">
   <tr>
     <td width="33.33%" align="left" valign="top">
-      <div><b>Source</b></div>
+      <div>**Source**</div>
       <div>
         {<br/>
           &nbsp;"question": "How are you doing?",<br/>
@@ -21,7 +21,7 @@ The reason for doing this is to easily allow the passing of data between systems
       </div>
     </td>
     <td width="33.33%" align="left" valign="top">
-      <div><b>Transformation</b></div>
+      <div>**Transformation**</div>
       {<br/>
         &nbsp;"responseType": "survey",<br/>
         &nbsp;"{{ each(answer IN answers) AS answers }}": {<br/>
@@ -31,17 +31,19 @@ The reason for doing this is to easily allow the passing of data between systems
       }
     </td>
     <td width="33.33%" align="left" valign="top">
-      <div><b>Result</b></div>
+      <div>**Result**</div>
+      ```json
       {
-        &nbsp;"responseType": "survey",<br/>
-        &nbsp;"answers": [{<br/>
-        &nbsp;&nbsp;"text": "How are you doing?",<br/>
-        &nbsp;&nbsp;"answer": "I'm doing pretty well"<br/>
-        &nbsp;}, {<br/>
-        &nbsp;&nbsp;"text": "How are you doing?",<br/>
-        &nbsp;&nbsp;"answer": "I wish I was better"<br/>
-        &nbsp;}]<br/>
+        "responseType": "survey",
+        "answers": [{
+        "text": "How are you doing?",
+        "answer": "I'm doing pretty well"
+        }, {
+        "text": "How are you doing?",
+        "answer": "I wish I was better"
+        }]
       }
+      ```
     </td>
   </tr>
 </table>
