@@ -110,6 +110,8 @@ would translate to the following if the if evaluated true:
   }
 }
 ```
+
+
 #### Comparitors
 
 If statements at present can evaluate with either strings or numbers. Bear in mind that strings must be enclosed using single quotes ('). The following comparisons may be used:
@@ -131,3 +133,41 @@ If statements at present can evaluate with either strings or numbers. Bear in mi
 
 
 ### Each Statements
+
+The each statement allows the iteration over an object in the source document and apply a trasformation. Once the transformation has been performed it is appended to a node with the name specified after the "AS" keyword (for this reason an AS is required). e.g. As in the example, this source
+
+```json
+  {
+    "question": "How are you doing?",
+    "answers": [
+    "I'm doing pretty well",
+    "I wish I was better"
+    ]
+  }
+```
+
+Having this transformation applied
+
+```json
+  {
+    "responseType": "survey",
+    {{ each(answer IN answers) AS answers }}": {
+      "text": "{{ question }}",
+      "answer": "{{ answer }}"
+    }
+  }
+```
+
+Would result in the following output
+
+```json
+  {
+    "responseType": "survey",
+    "answers": [{
+      "text": "How are you doing?",
+      "answer": "I'm doing pretty well"
+    }, {
+      "text": "How are you doing?",
+      "answer": "I wish I was better"
+    }]<br/>
+  }
