@@ -37,7 +37,7 @@ namespace JSONTranform
                     {
                         if (child.GetType() == typeof(JObject))
                         {
-                            JToken transformedToken = TransformToken((JObject)source, transformation);
+                            JToken transformedToken = TransformToken((JObject)child, transformation);
 
                             if (transformedToken != null) ((JArray)returnJSON).Add(transformedToken);
                         }

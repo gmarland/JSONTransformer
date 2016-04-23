@@ -42,6 +42,54 @@ namespace JSONTranform.Tests
         }
 
         [TestMethod]
+        public void TransformArrayRouteJSONValid()
+        {
+            JToken source = GetJSONObject(@"JSON\Source\arrayRoute.json");
+            JToken transform = GetJSONObject(@"JSON\Transform\simple.json");
+
+            JToken result = Transformer.TransformJSON(source, transform);
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(JArray));
+
+            JArray resultArray = ((JArray)result);
+
+            Assert.AreEqual(2, resultArray.Count);
+
+            Assert.IsInstanceOfType(resultArray[0], typeof(JArray));
+
+            JArray childOne = (JArray)resultArray[0];
+
+            Assert.AreEqual(childOne.Count, 3);
+
+            foreach (JToken response in childOne.Children())
+            {
+                if (response["responseType"] != null) Assert.AreEqual("survey", (string)response["responseType"]);
+                else if (response["item"] != null)
+                {
+                    if (((string)response["item"]) == "question") Assert.AreEqual("How are you doing?", (string)response["text"]);
+                    else if (((string)response["item"]) == "answer") Assert.AreEqual("I'm doing pretty well", (string)response["text"]);
+                }
+            }
+
+            Assert.IsInstanceOfType(resultArray[1], typeof(JArray));
+
+            JArray childTwo = (JArray)resultArray[1];
+
+            Assert.AreEqual(childTwo.Count, 3);
+
+            foreach (JToken response in childTwo.Children())
+            {
+                if (response["responseType"] != null) Assert.AreEqual("survey", (string)response["responseType"]);
+                else if (response["item"] != null)
+                {
+                    if (((string)response["item"]) == "question") Assert.AreEqual("What is the weather like?", (string)response["text"]);
+                    else if (((string)response["item"]) == "answer") Assert.AreEqual("It's pretty sunny outside", (string)response["text"]);
+                }
+            }
+        }
+
+        [TestMethod]
         public void TransformMultipleJSONValid()
         {
             JToken source = GetJSONObject(@"JSON\Source\nested.json");

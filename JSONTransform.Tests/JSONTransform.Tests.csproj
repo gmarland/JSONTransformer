@@ -70,6 +70,9 @@
     <None Include="JSON\Source\nestedNested.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="JSON\Source\arrayRoute.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="JSON\Source\simple.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
