@@ -112,8 +112,17 @@ would translate to the following if the if evaluated true:
 
 If statements at present can evaluate with either strings or numbers. Bear in mind that strings must be enclosed using single quotes ('). The following comparisons may be used:
 
-*** Equals *** - e.g. "{{ if (child.object.property == 'this value') }}:"
-*** Not Equals *** - e.g. "{{ if (child.object.property != 'this value') }}:"
-*** Contains *** - case sensitive keyword. e.g. "{{ if (child.object.property CONTAINS 'this value') }}:"
+<b>Equals<b> - e.g. 
+```json"{{ if (child.object.property == 'this value') }}:"```
 
-*** And Operators *** - e.g.
+<b>Not Equals<b> - e.g. 
+```json"{{ if (child.object.property != 'this value') }}:"```
+
+<b>Contains<b> - case sensitive keyword. e.g. 
+```json"{{ if (child.object.property CONTAINS 'this value') }}:"```
+
+<b>And Operator</b> - e.g.
+```json"{{ if (child.object.property == 'this value') && (other.object.property == 'this value') }}:"```
+
+<b>Or Operator</b> - e.g.
+```json"{{ if (child.object.property == 'this value') || (other.object.property == 'this value') }}:"```
