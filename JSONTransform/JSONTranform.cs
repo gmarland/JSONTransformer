@@ -78,7 +78,7 @@ namespace JSONTranform
             return returnJSON;
         }
 
-        private static JObject TransformObject(JObject source, JObject transformation)
+        private static JObject TransformObject(JObject source, JObject transformation, JObject iterationSource = null)
         {
             // Parsing transformation object
 
@@ -106,7 +106,7 @@ namespace JSONTranform
                             {
                                 if (LogicalUtils.ParseValidIfCondition(cleanedProperty, source))
                                 {
-                                    JObject child = TransformObject(source, (JObject)serializedTransformation[property]);
+                                    JObject child = TransformObject(source, (JObject)serializedTransformation[property], iterationSource);
 
                                     if (child != null)
                                     {
@@ -127,39 +127,129 @@ namespace JSONTranform
                             }
                             else if (logicalType == LogicalType.EACH)
                             {
+                                if (String.IsNullOrEmpty(logicalMask)) throw new Exception("Each statements require an AS statement");
 
+                                IDictionary<string, string> eachProperties = LogicalUtils.ParseEachProperties(cleanedProperty);
+
+                                JToken requestedEnumerate = ReplaceUtils.GetProperty(eachProperties["property"], source);
+
+                                JArray iterationArray = new JArray();
+
+                                if (requestedEnumerate.GetType() == typeof(JArray))
+                                {
+                                    if (serializedTransformation[property].GetType() == typeof(JObject))
+                                    {
+                                        foreach (JToken child in requestedEnumerate.Children())
+                                        {
+                                            JObject childObject = new JObject();
+                                            childObject.Add(eachProperties["child"], child);
+
+                                            iterationArray.Add(TransformObject(source, (JObject)serializedTransformation[property], childObject));
+                                        }
+                                    }
+                                    else if (serializedTransformation[property].GetType() == typeof(JArray))
+                                    {
+                                        foreach (JToken child in requestedEnumerate.Children())
+                                        {
+                                            JObject childObject = new JObject();
+                                            childObject.Add(eachProperties["child"], child);
+
+                                            iterationArray.Add(TransformObject(source, (JArray)serializedTransformation[property], childObject));
+                                        }
+                                    }
+                                }
+                                else if (requestedEnumerate.GetType() == typeof(JObject))
+                                {
+                                    JObject childObject = new JObject();
+                                    childObject.Add(eachProperties["child"], requestedEnumerate);
+
+                                    if (serializedTransformation[property].GetType() == typeof(JObject)) iterationArray.Add(TransformObject(source, (JObject)serializedTransformation[property], childObject));
+                                    else if (serializedTransformation[property].GetType() == typeof(JArray)) iterationArray.Add(TransformObject(source, (JArray)serializedTransformation[property], childObject));
+                                }
+
+                                returnJSON.Add(logicalMask, iterationArray);
                             }
                         }
-                        else returnJSON.Add(ReplaceUtils.TransformString(property, source).ToString(), BuildResponseObject(source, property, serializedTransformation[property]));
+                        else
+                        {
+                            string propertyName;
+
+                            if (iterationSource != null)
+                            {
+                                object replaced = ReplaceUtils.TransformString(property, iterationSource);
+                                if (replaced == null) replaced = ReplaceUtils.TransformString(property, source);
+
+                                if (replaced == null) throw new Exception("Unable to match value \"" + property + "\"");
+                                else propertyName = replaced.ToString();
+                            }
+                            else propertyName = ReplaceUtils.TransformString(property, source).ToString();
+
+                            returnJSON.Add(propertyName, BuildResponseObject(source, property, serializedTransformation[property], iterationSource));
+                        }
+
                     }
                 }
-                else returnJSON.Add(ReplaceUtils.TransformString(property, source).ToString(), BuildResponseObject(source, property, serializedTransformation[property]));
+                else
+                {
+                    string propertyName;
+
+                    if (iterationSource != null)
+                    {
+                        object replaced = ReplaceUtils.TransformString(property, iterationSource);
+                        if (replaced == null) replaced = ReplaceUtils.TransformString(property, source);
+
+                        if (replaced == null) throw new Exception("Unable to match value \"" + property + "\"");
+                        else propertyName = replaced.ToString();
+                    }
+                    else propertyName = ReplaceUtils.TransformString(property, source).ToString();
+
+                    returnJSON.Add(propertyName, BuildResponseObject(source, property, serializedTransformation[property], iterationSource));
+                }
             }
 
             return JObject.FromObject(returnJSON);
         }
 
-        private static object BuildResponseObject(JObject source, string propertyName, object propertyValue)
-        {
-            // Building response JSON
-            if (propertyValue.GetType() == typeof(string)) return ReplaceUtils.TransformString((string)propertyValue, source);
-            else if (propertyValue.GetType() == typeof(JObject)) return TransformObject(source, (JObject)propertyValue);
-            else if (propertyValue.GetType() == typeof(JArray)) return TransformObject(source, (JArray)propertyValue);
-            else return propertyValue;
-        }
-
-        private static JArray TransformObject(JObject source, JArray transformation)
+        private static JArray TransformObject(JObject source, JArray transformation, JObject iterationSource = null)
         {
             List<object> returnJSON = new List<object>();
 
             foreach (JToken child in transformation.Children())
             {
                 if (child.Type == JTokenType.String) returnJSON.Add(ReplaceUtils.TransformString((string)child, source));
-                else if (child.GetType() == typeof(JObject)) returnJSON.Add(TransformObject(source, (JObject)child));
+                else if (child.GetType() == typeof(JObject)) returnJSON.Add(TransformObject(source, (JObject)child, iterationSource));
                 else returnJSON.Add(child);
             }
 
             return JArray.FromObject(returnJSON);
+        }
+
+        private static object BuildResponseObject(JObject source, string propertyName, object propertyValue, JObject iterationSource = null)
+        {
+            // Building response JSON
+            if (propertyValue.GetType() == typeof(string))
+            {
+                string property = (string)propertyValue;
+
+                if (iterationSource != null)
+                {
+                    object replaced = ReplaceUtils.TransformString(property, iterationSource);
+                    if (replaced == null) replaced = ReplaceUtils.TransformString(property, source);
+
+                    if (replaced == null) throw new Exception("Unable to match value \"" + property + "\"");
+                    else return replaced;
+                }
+                else
+                {
+                    object replaced = ReplaceUtils.TransformString(property, source);
+
+                    if (replaced == null) throw new Exception("Unable to match value \"" + property + "\"");
+                    else return replaced;
+                }
+            }
+            else if (propertyValue.GetType() == typeof(JObject)) return TransformObject(source, (JObject)propertyValue, iterationSource);
+            else if (propertyValue.GetType() == typeof(JArray)) return TransformObject(source, (JArray)propertyValue, iterationSource);
+            else return propertyValue;
         }
     }
 }

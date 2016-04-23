@@ -3,7 +3,7 @@
     "responseType": "survey"
   },
   {
-    "{{ each(eachAnswer in answer) AS answers }}": {
+    "{{ each(eachAnswer IN answer) AS answers }}": {
       "item": "questionPassing",
       "text": "{{ question }}",
       "answer": "{{ eachAnswer }}"

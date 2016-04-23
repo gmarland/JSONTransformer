@@ -40,7 +40,7 @@ namespace JSONTransform.Models.Conditions
                     {
                         try
                         {
-                            LeftSide = "'" + ReplaceUtils.TransformProperty(leftSide, _resource).ToString() + "'";
+                            LeftSide = "'" + ReplaceUtils.GetProperty(leftSide, _resource).ToString() + "'";
                         }
                         catch (Exception) { }
                     }
@@ -57,7 +57,7 @@ namespace JSONTransform.Models.Conditions
                     {
                         try
                         {
-                            RightSide = "'" + ReplaceUtils.TransformProperty(rightSide, _resource).ToString() + "'";
+                            RightSide = "'" + ReplaceUtils.GetProperty(rightSide, _resource).ToString() + "'";
                         }
                         catch (Exception) { }
                     }

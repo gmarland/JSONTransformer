@@ -19,12 +19,12 @@ namespace JSONTransform.Utils
         public static bool ParseValidIfCondition(string condition, JObject resource)
         {
             if (condition.Trim().ToLower().StartsWith("if")) condition = condition.Trim().Substring(2).Trim();
-                 
+
             List<int> openBracketPosition = new List<int>();
 
             char[] conditionArray = condition.ToCharArray();
 
-            for(int i=0; i<conditionArray.Length; i++)
+            for (int i = 0; i < conditionArray.Length; i++)
             {
                 if (conditionArray[i] == '(') openBracketPosition.Add(i);
                 else if (conditionArray[i] == ')')
@@ -34,11 +34,11 @@ namespace JSONTransform.Utils
                         int startIndex = openBracketPosition[(openBracketPosition.Count - 1)],
                             endIndex = (i + 1);
 
-                        string currentCondition = condition.Substring(startIndex, (endIndex-startIndex));
+                        string currentCondition = condition.Substring(startIndex, (endIndex - startIndex));
 
                         ICondition conditionOperator = ConditionalFactory.GetCondition(currentCondition, resource);
 
-                        if (conditionOperator != null) condition = condition.Substring(0, openBracketPosition[(openBracketPosition.Count - 1)]) + conditionOperator.isValid() + condition.Substring((i+1));
+                        if (conditionOperator != null) condition = condition.Substring(0, openBracketPosition[(openBracketPosition.Count - 1)]) + conditionOperator.isValid() + condition.Substring((i + 1));
                         else throw new Exception("Invalid condition '" + currentCondition + "'");
                         break;
                     }
@@ -52,6 +52,28 @@ namespace JSONTransform.Utils
                 else return false;
             }
             else return ParseValidIfCondition(condition, resource);
+        }
+
+        public static IDictionary<string, string> ParseEachProperties(string condition)
+        {
+            if (condition.Trim().ToLower().StartsWith("each"))
+            {
+                string cleanedCondition = condition.Trim().Substring(4).Trim();
+                cleanedCondition = cleanedCondition.Substring(1, (cleanedCondition.Length - 2));
+
+                string[] eachParts = cleanedCondition.Split(new string[] { "IN" }, StringSplitOptions.None);
+
+                if (eachParts.Length == 2)
+                {
+                    return new Dictionary<string, string>()
+                    {
+                        { "child", eachParts[0].Trim() },
+                        { "property", eachParts[1].Trim() }
+                    };
+                }
+                else throw new Exception("Invalid each condition");
+            }
+            else throw new Exception("Invalid each condition");
         }
     }
 }

@@ -20,20 +20,20 @@ namespace JSONTransform.Utils
 
                 string cleanedMatch = StringUtils.CleanProperty(match.Value);
 
-                JToken matchedObject = TransformProperty(cleanedMatch, resource);
+                JToken matchedObject = GetProperty(cleanedMatch, resource);
 
                 if (matchedObject != null)
                 {
                     if (matchedObject.Type == JTokenType.String) returnString = returnString.Replace(match.Value, (string)matchedObject);
                     else return matchedObject;
                 }
-                else throw new Exception("Unable to match value \"" + match.Value + "\"");
+                else return null;
             }
 
             return returnString;
         }
 
-        public static JToken TransformProperty(string target, JObject resource)
+        public static JToken GetProperty(string target, JObject resource)
         {
             string[] matchPath = target.Split(new char[] { '.' });
             JToken matchedObject = resource;
