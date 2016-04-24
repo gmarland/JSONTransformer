@@ -63,7 +63,7 @@ If statements can be included in a transformation be setting them in the a prope
 ```json
 {
   "file": "transformation",
-  "{{ if (child.in.source == 'this value' }}": {
+  "{{ if (child.in.source == 'this value') }}": {
     "this": "here",
     "only": "if the parent condition is true"
   }
@@ -86,7 +86,7 @@ Using the "AS" (case sensitive) keyword you can also create a parent object for 
 ```json
 {
   "file": "transformation",
-  "{{ if (child.in.source == 'this value' }} AS parent": {
+  "{{ if (child.in.source == 'this value') AS parent }}": {
     "this": "here",
     "only": "if the parent condition is true"
   }
